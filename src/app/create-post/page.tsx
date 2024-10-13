@@ -20,7 +20,6 @@ async function getPosts() {
 
 export default async function PostsPage() {
   const posts = await getPosts();
-  console.log(posts);
   return (
     <>
       <PostForm />
