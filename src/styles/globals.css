@@ -1,0 +1,80 @@
+/* btn-theme for theme buttons
+btn-theme-outline for theme buttons with outline
+badge-theme for badges
+badge-theme-sm for small badges
+invert-slate-text for slatey text
+border-theme for border color
+bg-invert for background color */
+
+
+
+
+
+* {
+  @apply box-border
+}
+
+html {
+  transition: all 0.3s ease;
+  @apply !scroll-smooth;
+}
+
+[data-theme="dark"] {
+  transition: all 0.3s ease;
+}
+
+body {
+  @apply m-0 p-0 font-sans
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply m-0 text-primary font-montserrat
+}
+
+
+
+
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+p,
+span {
+  @apply mt-0
+}
+
+.text_gradient {
+  @apply bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text
+}
+
+a {
+  @apply no-underline text-slate-700 dark:text-slate-200
+}
+
+img {
+  @apply max-w-full object-cover h-auto
+}
+
+.head_title {
+  @apply flex justify-between items-center py-12 relative
+}
+
+.head_title h1 {
+  @apply uppercase font-bold
+}
+.btn-theme{
+  @apply bg-purple-500 text-white hover:bg-purple-500/90 hover:text-white
+}
+.btn-theme-outline{
+  @apply bg-transparent text-purple-500 border border-purple-500 hover:bg-purple-500 hover:text-white transition-all
+}
+
