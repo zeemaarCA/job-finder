@@ -1,6 +1,5 @@
 .row{
-  display: flex;
-  flex-wrap: wrap;
+  @apply flex flex-wrap gap-4
 }
 
 /* col-1 to col-12 (all screens) */
