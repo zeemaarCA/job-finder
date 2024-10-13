@@ -2,16 +2,20 @@ import { NextResponse } from "next/server";
 import prisma from "@lib/prisma";
 
 export async function POST(request) {
-  const { title, content } = await request.json();
+  try {
+    const { title, content } = await request.json();
 
-  // Perform database operations here
-  const result = await prisma.post.create({
-    data: {
-      title,
-      content,
-      published: true,
-    },
-  });
+    const result = await prisma.post.create({
+      data: {
+        title,
+        content,
+        published: true,
+      },
+    });
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("Request error", error);
+    return NextResponse.json({ error: "Error creating post" }, { status: 500 });
+  }
 }
