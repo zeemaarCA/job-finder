@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import prisma from "@lib/prisma";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
-    const { title, content } = await request.json();
+    const { title, content, userId } = await request.json();
 
     const result = await prisma.post.create({
       data: {
         title,
         content,
         published: true,
+        author: { connect: { id: userId } },
       },
     });
 

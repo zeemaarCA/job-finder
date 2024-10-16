@@ -5,15 +5,28 @@ import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import { Textarea } from "@components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function PostForm() {
-
+  const { data: session, status } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Only redirect if the session status is "authenticated" or "unauthenticated"
+    if (status === "unauthenticated") {
+      router.push("/");
+      toast.error("You need to be logged in to create a prompt");
+    }
+  }, [status]);
+
+  if (status === "loading") {
+    return null;
+  }
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,6 +40,7 @@ export default function PostForm() {
         body: JSON.stringify({
           title,
           content,
+          userId: session?.user.id,
         }),
       });
 

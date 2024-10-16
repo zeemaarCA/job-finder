@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image";
 import { Button } from "./ui/button";
 import logo from "../../public/logo.png";
@@ -6,6 +8,8 @@ import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { HiMenuAlt3 } from "react-icons/hi";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const menuLinks = [
   {
@@ -41,11 +45,12 @@ const menuLinks = [
 ];
 
 export default function Navbar() {
+  const { data: session } = useSession();
   return (
     <>
       <div className="bg-white py-2 border-b border-slate-200">
-        <nav className="container flex items-center justify-between">
-          <div className="logo">
+        <nav className="container flex items-center gap-4">
+          <div className="logo flex-1">
             <Image src={logo} alt="logo" width={130} height={100} />
           </div>
           <div className="nav-center hidden lg:block">
@@ -77,7 +82,42 @@ export default function Navbar() {
             </ul>
           </div>
           <div className="nav-right flex items-center gap-2">
-            <Button variant="outline" className="btn-theme-outline">Sign In</Button>
+            {session?.user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={session?.user?.image || "../../public/logo.png"}
+                        alt={session?.user?.name ?? "User"}
+                        onError={(e) => {
+                          e.currentTarget.src = "../../public/logo.png"; // Fallback image on error
+                        }}
+                      />
+
+                      <AvatarFallback>{session.user.name ? session.user.name[0] : 'U'}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {session.user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="outline" onClick={() => signIn('google')}>
+                Sign In
+              </Button>
+            )}
             <div className="menu-btn lg:hidden">
               <Sheet>
                 <SheetTrigger asChild>

@@ -5,6 +5,9 @@ import "@styles/globals.css";
 import "@styles/grid.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import { Suspense } from "react";
+import Loader from "@components/Loader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,12 +21,12 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-	title: {
-		default: "Job Finder",
-		template: "%s | Job Finder",
-	},
-	description:
-		"Job Finder is a place where you can find all the jobs you need for your career.",
+  title: {
+    default: "Job Finder",
+    template: "%s | Job Finder",
+  },
+  description:
+    "Job Finder is a place where you can find all the jobs you need for your career.",
 };
 
 export default function RootLayout({
@@ -34,10 +37,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <Navbar />
-        {children}
+        <SessionProviderWrapper>
+          <Navbar />
+          <Suspense fallback={<Loader />}>
+            <div className="flex-grow">{children}</div>
+          </Suspense>
+        </SessionProviderWrapper>
         <Toaster
           position="bottom-right"
           richColors

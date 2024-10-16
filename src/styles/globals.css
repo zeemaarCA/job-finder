@@ -7,12 +7,9 @@ border-theme for border color
 bg-invert for background color */
 
 
-
-
-
 * {
   @apply box-border
-}
+}`
 
 html {
   transition: all 0.3s ease;
@@ -30,10 +27,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
   @apply m-0 text-primary font-montserrat
 }
-
-
-
-
 
 h1 {
   font-size: 32px;
