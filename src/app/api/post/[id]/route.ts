@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import prisma from "@lib/prisma";
+import { db } from "@lib/db";
 
 export const GET = async (request: Request, { params }: { params: { id: string } }) => {
 	try {
-		const post = await prisma.post.findUnique({
+		const post = await db.post.findUnique({
 			where: {
 				id: params.id,
 			},
@@ -27,7 +27,7 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
 	const { title, content } = await request.json();
 
 	try {
-		const post = await prisma.post.update({
+		const post = await db.post.update({
 			where: {
 				id: params.id,
 			},
