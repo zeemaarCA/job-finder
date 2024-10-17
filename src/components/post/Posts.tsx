@@ -1,8 +1,8 @@
 import Posts from "@components/post/Post";
-import prisma from "@lib/prisma";
+import { db } from "@lib/db";
 
 async function getPosts() {
-  const posts = await prisma.post.findMany({
+  const posts = await db.post.findMany({
     where: {
       published: true,
     },
