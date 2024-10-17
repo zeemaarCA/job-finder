@@ -32,59 +32,64 @@ export const authOptions: AuthOptions = {
       }
       return session;
     },
-		async signIn({ account, profile }) {
-			if (account?.provider === "google" && profile?.email) {
-				const googleProfile = profile as GoogleProfile;
-				let user = await db.user.findUnique({
-					where: { email: profile.email },
-				});
+    async signIn({ account, profile }) {
+      console.log('Account:', account);
+      console.log('Profile:', profile);
 
-				// Create a new user if one doesn't exist
-				if (!user) {
-					const username = googleProfile.name
-						? googleProfile.name.replace(/\s+/g, "").toLowerCase() +
-						  Math.random().toString(9).slice(-4)
-						: "user" + Math.random().toString(9).slice(-4);
+      if (account?.provider === "google" && profile?.email) {
+        const googleProfile = profile as GoogleProfile;
+        try {
+          let user = await db.user.findUnique({
+            where: { email: profile.email },
+          });
 
-					user = await db.user.create({
-						data: {
-							email: googleProfile.email,
-							name: googleProfile.name ?? null,
-							image: googleProfile.picture ?? null, // Access picture safely now
-							username: username,
-							emailVerified: googleProfile.email_verified
-						},
-					});
-				}
+          if (!user) {
+            const username = googleProfile.name
+              ? googleProfile.name.replace(/\s+/g, "").toLowerCase() +
+                Math.random().toString(9).slice(-4)
+              : "user" + Math.random().toString(9).slice(-4);
 
-				// Ensure the account is created if it doesn't exist
-				const existingAccount = await db.account.findFirst({
-					where: { userId: user.id, provider: "google" },
-				});
+            user = await db.user.create({
+              data: {
+                email: googleProfile.email,
+                name: googleProfile.name ?? null,
+                image: googleProfile.picture ?? null,
+                username: username,
+                emailVerified: googleProfile.email_verified
+              },
+            });
+          }
 
-				if (!existingAccount) {
-					await db.account.create({
-						data: {
-							userId: user.id,
-							type: account.type,
-							provider: account.provider,
-							providerAccountId: account.providerAccountId,
-							access_token: account.access_token,
-							expires_at: account.expires_at,
-							token_type: account.token_type,
-							scope: account.scope,
-							id_token: account.id_token,
-							session_state: account.session_state,
-						},
-					});
-				}
+          const existingAccount = await db.account.findFirst({
+            where: { userId: user.id, provider: "google" },
+          });
 
-				// Returning true will proceed with the sign-in process
-				return true;
-			}
+          if (!existingAccount) {
+            await db.account.create({
+              data: {
+                userId: user.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+                session_state: account.session_state,
+              },
+            });
+          }
 
-			// Return false to block sign-in for non-Google providers or invalid profiles
-			return false;
-		},
+          return true;
+        } catch (error) {
+          console.error('Sign-in error:', error);
+          return false;
+        }
+      }
+
+      return false;
+    }
+
 	},
 };
